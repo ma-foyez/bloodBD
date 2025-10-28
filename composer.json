@@ -1,7 +1,7 @@
 {
-    "name": "laradashboard/laradashboard",
+    "name": "Blood BD",
     "type": "project",
-    "description": "Lara Dashboard - A Laravel CMS with Role, Permission, Module, Translation, Content Management",
+    "description": "Blood BD - A Laravel CMS with Role, Permission, Module, Translation, Content Management",
     "keywords": [
         "framework",
         "laravel",
