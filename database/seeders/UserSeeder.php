@@ -15,35 +15,47 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'first_name' => 'Super',
-            'last_name' => 'Admin',
-            'email' => 'superadmin@example.com',
-            'username' => 'superadmin',
-            'password' => Hash::make('12345678'),
-            'email_verified_at' => now(),
-        ]);
+        foreach ($this->users() as $user) {
+            User::updateOrCreate(
+                ['email' => $user['email']],
+                $user
+            );
+        }
 
-        User::create([
-            'first_name' => 'Admin',
-            'last_name' => '',
-            'email' => 'admin@example.com',
-            'username' => 'admin',
-            'password' => Hash::make('password'),
-            'email_verified_at' => now(),
-        ]);
+        $this->command->info('Users seeded successfully!');
+    }
 
-        User::create([
-            'first_name' => 'Sub',
-            'last_name' => 'Scriber',
-            'email' => 'subscriber@example.com',
-            'username' => 'subscriber',
-            'password' => Hash::make('password'),
-            'email_verified_at' => now(),
-        ]);
-
-        // Run factory to create additional users with unique details.
-        User::factory()->count(500)->create();
-        $this->command->info('Users table seeded with 502 users!');
+    private function users(): array
+    {
+        return [
+            [
+                'first_name' => 'Super',
+                'last_name' => 'Admin',
+                'email' => 'superadmin@example.com',
+                'username' => 'superadmin',
+                'mobile' => '01700000000',
+                'password' => Hash::make('12345678'),
+                'dob' => '1990-01-01',
+                'blood_group' => 'A+',
+                'is_active' => true,
+                'is_approved' => true,
+                'is_weight_50kg' => true,
+                'email_verified_at' => now(),
+            ],
+            [
+                'first_name' => 'Muhammad',
+                'last_name' => 'Abul Foyez',
+                'email' => 'mafoyez.bd@gmail.com',
+                'username' => 'mafoyez',
+                'mobile' => '01871929132',
+                'password' => Hash::make('12345678'),
+                'dob' => '2001-05-05',
+                'blood_group' => 'AB+',
+                'is_active' => true,
+                'is_approved' => true,
+                'is_weight_50kg' => true,
+                'email_verified_at' => now(),
+            ],
+        ];
     }
 }

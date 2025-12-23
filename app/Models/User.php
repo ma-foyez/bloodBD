@@ -39,6 +39,19 @@ class User extends Authenticatable
         'password',
         'username',
         'avatar_id',
+        'mobile',
+        'dob',
+        'blood_group',
+        'occupation',
+        'is_weight_50kg',
+        'last_donation',
+        'division_id',
+        'district_id',
+        'area_id',
+        'post_office',
+        'is_active',
+        'is_approved',
+        'pic',
     ];
 
     /**
@@ -132,6 +145,21 @@ class User extends Authenticatable
     public function avatar(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'avatar_id', 'id');
+    }
+
+    public function division(): BelongsTo
+    {
+        return $this->belongsTo(Division::class);
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class);
+    }
+
+    public function area(): BelongsTo
+    {
+        return $this->belongsTo(Area::class);
     }
 
     /**

@@ -31,7 +31,7 @@ class PostFactory extends Factory
             'status' => fake()->randomElement(collect(PostStatus::cases())->pluck('value')->toArray()),
             'post_type' => fake()->randomElement(['post', 'page']),
             'slug' => fake()->unique()->slug(),
-            'user_id' => \App\Models\User::factory(),
+            'user_id' => \App\Models\User::first()->id ?? 1,
 
             // Create at and update_at would be random time between 1 year ago and now
             'created_at' => $this->faker->dateTimeBetween('-6 months', 'now'),
@@ -45,7 +45,7 @@ class PostFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }
