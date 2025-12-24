@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Api\ApiController;
-use App\Http\Requests\Auth\LoginRequest;
 use App\Services\UserService;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -29,10 +28,20 @@ class AuthController extends ApiController
     public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'username' => ['required', 'string', 'max:255', 'unique:users'],
+            'mobile' => ['nullable', 'string', 'max:20', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'dob' => ['nullable', 'date'],
+            'blood_group' => ['nullable', 'string', 'in:A+,A-,B+,B-,AB+,AB-,O+,O-'],
+            'occupation' => ['nullable', 'string', 'max:255'],
+            'is_weight_50kg' => ['nullable', 'boolean'],
+            'last_donation' => ['nullable', 'date'],
+            'division_id' => ['nullable', 'exists:divisions,id'],
+            'district_id' => ['nullable', 'exists:districts,id'],
+            'area_id' => ['nullable', 'exists:areas,id'],
+            'post_office' => ['nullable', 'string', 'max:255'],
         ]);
 
         if ($validator->fails()) {
@@ -40,12 +49,26 @@ class AuthController extends ApiController
         }
 
         // Prepare data for UserService
-        $data = $request->only(['first_name', 'last_name', 'email', 'password']);
-        $data['username'] = explode('@', $data['email'])[0] . rand(1000, 9999); // Auto-generate username or take from request if needed
+        $data = $request->only([
+            'name',
+            'email',
+            'username',
+            'mobile',
+            'password',
+            'dob',
+            'blood_group',
+            'occupation',
+            'is_weight_50kg',
+            'last_donation',
+            'division_id',
+            'district_id',
+            'area_id',
+            'post_office'
+        ]);
 
         $user = $this->userService->createUser($data);
 
-        // Assign default role 'user' if not handled in service
+        // Assign default role 'subscriber' if not handled in service
         if (!$user->hasAnyRole(\App\Models\Role::all())) {
             $user->assignRole(\App\Models\Role::SUBSCRIBER);
         }
@@ -59,13 +82,27 @@ class AuthController extends ApiController
         ], 'User registered successfully.', 201);
     }
     /**
-     * Login user and create token.
+     * Login user with email or mobile and create token.
      *
      * @tags Authentication
      */
-    public function login(LoginRequest $request): JsonResponse
+    public function login(Request $request): JsonResponse
     {
-        $user = User::where('email', $request->email)->first();
+        $validator = Validator::make($request->all(), [
+            'email_or_mobile' => ['required', 'string'],
+            'password' => ['required', 'string'],
+        ]);
+
+        if ($validator->fails()) {
+            return $this->validationErrorResponse($validator->errors()->toArray());
+        }
+
+        $emailOrMobile = $request->email_or_mobile;
+
+        // Try to find user by email or mobile
+        $user = User::where('email', $emailOrMobile)
+            ->orWhere('mobile', $emailOrMobile)
+            ->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return $this->errorResponse('Invalid credentials', 401);
@@ -78,10 +115,10 @@ class AuthController extends ApiController
             'token' => $token,
             'user' => [
                 'id' => $user->id,
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
-                'full_name' => $user->full_name,
+                'name' => $user->name,
                 'email' => $user->email,
+                'username' => $user->username,
+                'mobile' => $user->mobile,
                 'created_at' => $user->created_at,
                 'updated_at' => $user->updated_at,
             ],

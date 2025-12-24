@@ -4,6 +4,9 @@ namespace App\Livewire\Backend\User;
 
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Division;
+use App\Models\District;
+use App\Models\Area;
 use App\Services\RolesService;
 use App\Services\UserService;
 use App\Services\LanguageService;
@@ -17,7 +20,9 @@ class UserManager extends Component
 {
     use WithPagination;
 
-    public $first_name, $last_name, $email, $username, $password, $password_confirmation;
+    public $name, $email, $username, $mobile, $password, $password_confirmation;
+    public $dob, $blood_group, $occupation, $is_weight_50kg = false, $last_donation;
+    public $division_id = '', $district_id = '', $area_id = '', $post_office;
     public $status = 1;
     public $userId;
     public $selectedRoles = [];
@@ -37,11 +42,22 @@ class UserManager extends Component
             ->orWhere('username', 'like', '%' . $this->search . '%')
             ->paginate(10);
 
+        $districts = $this->division_id
+            ? District::where('division_id', $this->division_id)->get()
+            : [];
+
+        $areas = $this->district_id
+            ? Area::where('district_id', $this->district_id)->get()
+            : [];
+
         return view('livewire.backend.user.user-manager', [
             'users' => $users,
             'roles' => app(RolesService::class)->getRolesDropdown(),
             'locales' => app(LanguageService::class)->getLanguages(),
             'timezones' => app(TimezoneService::class)->getTimezones(),
+            'divisions' => Division::all(),
+            'districts' => $districts,
+            'areas' => $areas,
         ]);
     }
 
@@ -64,12 +80,21 @@ class UserManager extends Component
 
     private function resetInputFields()
     {
-        $this->first_name = '';
-        $this->last_name = '';
+        $this->name = '';
         $this->email = '';
         $this->username = '';
+        $this->mobile = '';
         $this->password = '';
         $this->password_confirmation = '';
+        $this->dob = '';
+        $this->blood_group = '';
+        $this->occupation = '';
+        $this->is_weight_50kg = false;
+        $this->last_donation = '';
+        $this->division_id = '';
+        $this->district_id = '';
+        $this->area_id = '';
+        $this->post_office = '';
         $this->selectedRoles = [];
         $this->status = 1;
         $this->userId = null;
@@ -80,10 +105,19 @@ class UserManager extends Component
     protected function rules()
     {
         $rules = [
-            'first_name' => 'required|max:50',
-            'last_name' => 'required|max:50',
-            'email' => ['required', 'email', 'max:100', Rule::unique('users')->ignore($this->userId)],
-            'username' => ['required', 'max:100', Rule::unique('users')->ignore($this->userId)],
+            'name' => 'required|max:255',
+            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($this->userId)],
+            'username' => ['required', 'max:255', Rule::unique('users')->ignore($this->userId)],
+            'mobile' => ['nullable', 'max:20', Rule::unique('users')->ignore($this->userId)],
+            'dob' => 'nullable|date',
+            'blood_group' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+            'occupation' => 'nullable|max:255',
+            'is_weight_50kg' => 'nullable|boolean',
+            'last_donation' => 'nullable|date',
+            'division_id' => 'nullable|exists:divisions,id',
+            'district_id' => 'nullable|exists:districts,id',
+            'area_id' => 'nullable|exists:areas,id',
+            'post_office' => 'nullable|max:255',
             'selectedRoles' => 'nullable|array',
         ];
 
@@ -101,12 +135,20 @@ class UserManager extends Component
         $this->validate();
 
         $data = [
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
+            'name' => $this->name,
             'email' => $this->email,
             'username' => $this->username,
+            'mobile' => $this->mobile,
+            'dob' => $this->dob,
+            'blood_group' => $this->blood_group,
+            'occupation' => $this->occupation,
+            'is_weight_50kg' => $this->is_weight_50kg,
+            'last_donation' => $this->last_donation,
+            'division_id' => $this->division_id,
+            'district_id' => $this->district_id,
+            'area_id' => $this->area_id,
+            'post_office' => $this->post_office,
             'roles' => $this->selectedRoles,
-            // 'is_active' => $this->status, // Assuming simple status mapping if needed
         ];
 
         if ($this->password) {
@@ -126,16 +168,35 @@ class UserManager extends Component
         $this->resetInputFields();
     }
 
+    public function updatedDivisionId()
+    {
+        $this->district_id = '';
+        $this->area_id = '';
+    }
+
+    public function updatedDistrictId()
+    {
+        $this->area_id = '';
+    }
+
     public function edit($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::with('division', 'district', 'area')->findOrFail($id);
         $this->userId = $id;
-        $this->first_name = $user->first_name;
-        $this->last_name = $user->last_name;
+        $this->name = $user->name;
         $this->email = $user->email;
         $this->username = $user->username;
+        $this->mobile = $user->mobile;
+        $this->dob = $user->dob;
+        $this->blood_group = $user->blood_group;
+        $this->occupation = $user->occupation;
+        $this->is_weight_50kg = $user->is_weight_50kg;
+        $this->last_donation = $user->last_donation;
+        $this->division_id = $user->division_id;
+        $this->district_id = $user->district_id;
+        $this->area_id = $user->area_id;
+        $this->post_office = $user->post_office;
         $this->selectedRoles = $user->roles->pluck('name')->toArray();
-        // $this->status = $user->is_active;
 
         $this->openModal();
     }
