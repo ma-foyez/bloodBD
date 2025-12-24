@@ -115,8 +115,7 @@ class AuthController extends ApiController
         $user->load(['division', 'district', 'area']);
 
         return $this->successResponse([
-            'token' => $token,
-            'user' => [
+            'data' => [
                 'id' => $user->id,
                 'name' => trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')),
                 'email' => $user->email,
@@ -127,19 +126,19 @@ class AuthController extends ApiController
                 'occupation' => $user->occupation,
                 'is_weight_50kg' => $user->is_weight_50kg,
                 'last_donation' => $user->last_donation,
-                'location' => [
+                'is_active' => $user->is_active,
+                // 'is_approved' => $user->is_approved,
+                'pic' => $user->pic,
+                'registered_at' => $user->created_at,
+                'address' => [
                     'division' => $user->division ? $user->division->name : null,
                     'district' => $user->district ? $user->district->name : null,
                     'area' => $user->area ? $user->area->name : null,
                     'post_office' => $user->post_office,
                 ],
-                'is_active' => $user->is_active,
-                // 'is_approved' => $user->is_approved,
-                'pic' => $user->pic,
-                'registered_at' => $user->created_at,
-                // 'updated_at' => $user->updated_at,
+                'access_token' => $token,
+
             ],
-            'token_type' => 'Bearer',
         ], 'Login successful.');
     }
 
