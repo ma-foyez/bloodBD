@@ -7,9 +7,9 @@
 [![Unlicense License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
-<img width="100%" alt="Lara Dashboard" src="https://github.com/user-attachments/assets/c56009a4-718f-43dc-bd1e-caad5417b05b"  />
+<img width="100%" alt="Rokther Sondhane" src="https://github.com/user-attachments/assets/c56009a4-718f-43dc-bd1e-caad5417b05b"  />
 
-**⚡ Lara Dashboard** CMS By Laravel (7.x - 12.x) - Manages Users, Roles, Permissions, Modules, Settings, Translations, Contents(Post, Page, Category, Tags), System logs, Monitoring, Rest API's and every actions of your Laravel application. A complete CMS solution for Laravel application with Tailwind CSS integrated with all starting features including modules, dark/lite mode, charts, tables, forms, lots of components and many more. By our preimium modules, you can get more features like CRM, HRM, Course Management and so on.
+**⚡ Rokther Sondhane** CMS By Laravel (7.x - 12.x) - Manages Users, Roles, Permissions, Modules, Settings, Translations, Contents(Post, Page, Category, Tags), System logs, Monitoring, Rest API's and every actions of your Laravel application. A complete CMS solution for Laravel application with Tailwind CSS integrated with all starting features including modules, dark/lite mode, charts, tables, forms, lots of components and many more. By our preimium modules, you can get more features like CRM, HRM, Course Management and so on.
 
 **Demo:** https://laradashboard.com/try-demo/
 
@@ -68,7 +68,7 @@ password - 12345678
 
 **[v2.0.1] - 2025-07-27**
 
--   **Feat:** Refactor Lara Dashboard whole Admin UI - Icons, Accessibility, Components, Pages, Layouts and so on.
+-   **Feat:** Refactor Rokther Sondhane whole Admin UI - Icons, Accessibility, Components, Pages, Layouts and so on.
 -   **Enhancement:** Keep search form design consistent as `form-control` height.
 -   **Enhancement:** Global variable for editor script to handle from any module.
 -   **Enhancement:** Cleanup many codes to separate service to keep business logics separated.
@@ -79,13 +79,13 @@ password - 12345678
 
 **[v2.0] - 2025-07-20**
 
--   **Feat:** Refactor Lara Dashboard whole Admin UI - Icons, Accessibility, Components, Pages, Layouts and so on.
+-   **Feat:** Refactor Rokther Sondhane whole Admin UI - Icons, Accessibility, Components, Pages, Layouts and so on.
 -   **Enhancement:** Improve components, reusibility, and code quality.
 -   **Fix:** Some random UI fixes.
 
 **[v1.7.0] - 2025-07-13**
 
--   **Feat:** Rest API For Lara Dashboard, Scramble API documentation.
+-   **Feat:** Rest API For Rokther Sondhane, Scramble API documentation.
 -   **Enhancement:** Cleanup class names to use more standard class names.
 -   **Fix:** Some random UI fixes.
 
@@ -231,7 +231,7 @@ php artisan migrate:fresh --seed && php artisan module:seed
 composer run dev
 ```
 
-So, You've got the project of Lara Dashboard on your local machine - http://localhost:8000
+So, You've got the project of Rokther Sondhane on your local machine - http://localhost:8000
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -298,7 +298,7 @@ https://laradashboard.com/docs/
 
 ## 🔗 Rest API Documentation
 
-We've used [Scramble](https://github.com/dedoc/scramble) to automatically generate the Rest API documentation for Lara Dashboard. You can find the API documentation at:
+We've used [Scramble](https://github.com/dedoc/scramble) to automatically generate the Rest API documentation for Rokther Sondhane. You can find the API documentation at:
 
 http://localhost:8000/docs/api
 
@@ -339,7 +339,7 @@ composer run pest
 
 ## 🚀 Laravel Boost
 
-Laravel Boost is already installed in this project to provide enhanced development and debugging tools for Lara Dashboard.
+Laravel Boost is already installed in this project to provide enhanced development and debugging tools for Rokther Sondhane.
 
 **How to use Boost:**
 
@@ -632,13 +632,13 @@ https://laradashboard.com/try-demo/
 
 ## ✨ Premium Features
 
-Please visit at Lara Dashboard to get more premium moduels - https://laradashboard.com. Premium modules included CRM, HRM, Course Managements and so on.
+Please visit at Rokther Sondhane to get more premium moduels - https://laradashboard.com. Premium modules included CRM, HRM, Course Managements and so on.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 🧩 Core modules
 
--   **Task Manager** - https://github.com/laradashboard/TaskManager - Basic Task Manager module for Lara Dashboard | Standard Starter Module for Lara Dashboard.
+-   **Task Manager** - https://github.com/laradashboard/TaskManager - Basic Task Manager module for Rokther Sondhane | Standard Starter Module for Rokther Sondhane.
 -   **User Avatar** - https://github.com/laradashboard/UserAvatar - A very simple module create an avatar for a user. Handle migration, entries/updates in user forms and so on.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

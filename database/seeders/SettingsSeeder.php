@@ -15,7 +15,7 @@ class SettingsSeeder extends Seeder
     public function run(): void
     {
         $options = [
-            ['option_name' => 'app_name', 'option_value' => 'Lara Dashboard'],
+            ['option_name' => 'app_name', 'option_value' => 'Rokther Sondhane'],
 
             // theme colors.
             ['option_name' => 'theme_primary_color', 'option_value' => '#635bff'],

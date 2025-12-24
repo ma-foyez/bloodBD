@@ -20,13 +20,15 @@ class UserManager extends Component
 {
     use WithPagination;
 
-    public $name, $email, $username, $mobile, $password, $password_confirmation;
+    public $first_name, $last_name, $email, $username, $mobile, $password, $password_confirmation;
     public $dob, $blood_group, $occupation, $is_weight_50kg = false, $last_donation;
     public $division_id = '', $district_id = '', $area_id = '', $post_office;
     public $status = 1;
     public $userId;
     public $selectedRoles = [];
     public $isModalOpen = 0;
+    public $confirmingDelete = false;
+    public $deleteId = null;
     public $search = '';
 
     // Additional fields from original controller
@@ -36,8 +38,11 @@ class UserManager extends Component
     public function render()
     {
         $users = User::with('roles')
-            ->where('first_name', 'like', '%' . $this->search . '%')
-            ->orWhere('last_name', 'like', '%' . $this->search . '%')
+            ->where(function ($query) {
+                $query->where('first_name', 'like', '%' . $this->search . '%')
+                    ->orWhere('last_name', 'like', '%' . $this->search . '%')
+                    ->orWhereRaw("CONCAT(first_name, ' ', last_name) like ?", ['%' . $this->search . '%']);
+            })
             ->orWhere('email', 'like', '%' . $this->search . '%')
             ->orWhere('username', 'like', '%' . $this->search . '%')
             ->paginate(10);
@@ -80,7 +85,8 @@ class UserManager extends Component
 
     private function resetInputFields()
     {
-        $this->name = '';
+        $this->first_name = '';
+        $this->last_name = '';
         $this->email = '';
         $this->username = '';
         $this->mobile = '';
@@ -105,7 +111,8 @@ class UserManager extends Component
     protected function rules()
     {
         $rules = [
-            'name' => 'required|max:255',
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255',
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($this->userId)],
             'username' => ['required', 'max:255', Rule::unique('users')->ignore($this->userId)],
             'mobile' => ['nullable', 'max:20', Rule::unique('users')->ignore($this->userId)],
@@ -135,7 +142,8 @@ class UserManager extends Component
         $this->validate();
 
         $data = [
-            'name' => $this->name,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
             'email' => $this->email,
             'username' => $this->username,
             'mobile' => $this->mobile,
@@ -183,7 +191,8 @@ class UserManager extends Component
     {
         $user = User::with('division', 'district', 'area')->findOrFail($id);
         $this->userId = $id;
-        $this->name = $user->name;
+        $this->first_name = $user->first_name;
+        $this->last_name = $user->last_name;
         $this->email = $user->email;
         $this->username = $user->username;
         $this->mobile = $user->mobile;
@@ -201,17 +210,32 @@ class UserManager extends Component
         $this->openModal();
     }
 
-    public function delete($id)
+    public function confirmDelete($id)
     {
-        $user = User::find($id);
+        $this->deleteId = $id;
+        $this->confirmingDelete = true;
+    }
+
+    public function delete()
+    {
+        $user = User::find($this->deleteId);
         if ($user) {
             // Basic protection
             if ($user->hasRole(\App\Models\Role::SUPERADMIN) || $user->id === auth()->id()) {
                 session()->flash('error', 'Cannot delete this user.');
+                $this->confirmingDelete = false;
                 return;
             }
             $user->delete();
             session()->flash('message', 'User Deleted Successfully.');
         }
+        $this->confirmingDelete = false;
+        $this->deleteId = null;
+    }
+
+    public function cancelDelete()
+    {
+        $this->confirmingDelete = false;
+        $this->deleteId = null;
     }
 }
