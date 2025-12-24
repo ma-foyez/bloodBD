@@ -10,7 +10,7 @@ use App\Models\Union;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class LocationController extends Controller
+class LocationController extends ApiController
 {
     /**
      * Get all divisions.
@@ -18,7 +18,7 @@ class LocationController extends Controller
     public function getDivisions(): JsonResponse
     {
         $divisions = Division::all(['id', 'name', 'bn_name', 'url']);
-        return response()->json($divisions);
+        return $this->successResponse($divisions, 'Divisions retrieved successfully.');
     }
 
     /**
@@ -29,7 +29,7 @@ class LocationController extends Controller
         $districts = District::where('division_id', $divisionId)
             ->get(['id', 'division_id', 'name', 'bn_name', 'url']);
 
-        return response()->json($districts);
+        return $this->successResponse($districts, 'Districts retrieved successfully.');
     }
 
     /**
@@ -40,7 +40,7 @@ class LocationController extends Controller
         $areas = Area::where('district_id', $districtId)
             ->get(['id', 'district_id', 'name', 'bn_name', 'url']);
 
-        return response()->json($areas);
+        return $this->successResponse($areas, 'Areas retrieved successfully.');
     }
 
     /**
@@ -51,6 +51,6 @@ class LocationController extends Controller
         $unions = Union::where('area_id', $areaId)
             ->get(['id', 'area_id', 'name', 'bn_name', 'url']);
 
-        return response()->json($unions);
+        return $this->successResponse($unions, 'Unions retrieved successfully.');
     }
 }

@@ -36,7 +36,7 @@ class AuthController extends ApiController
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return $this->validationErrorResponse($validator->errors()->toArray());
         }
 
         // Prepare data for UserService
@@ -52,12 +52,11 @@ class AuthController extends ApiController
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
-            'message' => 'User registered successfully.',
+        return $this->successResponse([
             'token' => $token,
             'user' => $user,
             'token_type' => 'Bearer',
-        ], 201);
+        ], 'User registered successfully.', 201);
     }
     /**
      * Login user and create token.
@@ -69,15 +68,13 @@ class AuthController extends ApiController
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'message' => 'Invalid credentials',
-            ], 401);
+            return $this->errorResponse('Invalid credentials', 401);
         }
 
         // Create a token for the user
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
+        return $this->successResponse([
             'token' => $token,
             'user' => [
                 'id' => $user->id,
@@ -89,7 +86,7 @@ class AuthController extends ApiController
                 'updated_at' => $user->updated_at,
             ],
             'token_type' => 'Bearer',
-        ], 200);
+        ], 'Login successful.');
     }
 
     /**
@@ -100,7 +97,7 @@ class AuthController extends ApiController
     public function user(Request $request): JsonResponse
     {
         $user = $request->user();
-        return response()->json([
+        return $this->successResponse([
             'id' => $user->id,
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
@@ -108,7 +105,7 @@ class AuthController extends ApiController
             'email' => $user->email,
             'created_at' => $user->created_at,
             'updated_at' => $user->updated_at,
-        ], 200);
+        ], 'User details retrieved successfully.');
     }
 
     /**
@@ -120,9 +117,7 @@ class AuthController extends ApiController
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json([
-            'message' => 'Logged out successfully',
-        ], 200);
+        return $this->successResponse(null, 'Logged out successfully');
     }
 
     /**
@@ -134,8 +129,6 @@ class AuthController extends ApiController
     {
         $request->user()->tokens()->delete();
 
-        return response()->json([
-            'message' => 'All tokens revoked successfully',
-        ], 200);
+        return $this->successResponse(null, 'All tokens revoked successfully');
     }
 }
