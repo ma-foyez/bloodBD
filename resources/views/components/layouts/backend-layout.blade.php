@@ -1,4 +1,4 @@
-@props(['breadcrumbs' => []])
+@props(['breadcrumbs' => [], 'pageTitle' => null])
 
 @extends('backend.layouts.app')
 

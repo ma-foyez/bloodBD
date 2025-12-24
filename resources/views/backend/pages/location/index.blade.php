@@ -1,4 +1,5 @@
-<x-layouts.backend-layout>
+<x-layouts.backend-layout page-title="Location Management">
+
     <x-slot name="breadcrumbsData">
         {{-- Breadcrumbs if needed --}}
     </x-slot>
