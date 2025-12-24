@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/translations/{lang}', function (string $lang) {
     $path = resource_path("lang/{$lang}.json");
 
-    if (! file_exists($path)) {
+    if (!file_exists($path)) {
         return response()->json(['error' => 'Language not found'], 404);
     }
 
@@ -40,12 +40,21 @@ Route::get('/translations/{lang}', function (string $lang) {
 // Authentication routes
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/user', [AuthController::class, 'user']);
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/revoke-all', [AuthController::class, 'revokeAll']);
     });
+});
+
+// Location Routes (Public)
+Route::prefix('locations')->group(function () {
+    Route::get('/divisions', [\App\Http\Controllers\Api\LocationController::class, 'getDivisions']);
+    Route::get('/districts/{divisionId}', [\App\Http\Controllers\Api\LocationController::class, 'getDistricts']);
+    Route::get('/areas/{districtId}', [\App\Http\Controllers\Api\LocationController::class, 'getAreas']);
+    Route::get('/unions/{areaId}', [\App\Http\Controllers\Api\LocationController::class, 'getUnions']);
 });
 
 // Protected API routes

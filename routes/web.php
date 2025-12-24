@@ -57,6 +57,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
     Route::post('/translations', [TranslationController::class, 'update'])->name('translations.update');
     Route::post('/translations/create', [TranslationController::class, 'create'])->name('translations.create');
 
+    // Location Configuration
+    Route::get('/locations', [\App\Http\Controllers\Backend\LocationController::class, 'index'])->name('locations.index');
+
     // Login as & Switch back.
     Route::resource('users', UserController::class);
     Route::delete('users/delete/bulk-delete', [UserController::class, 'bulkDelete'])->name('users.bulk-delete');
@@ -115,4 +118,4 @@ Route::group(['prefix' => 'profile', 'as' => 'profile.', 'middleware' => ['auth'
 
 Route::get('/locale/{lang}', [LocaleController::class, 'switch'])->name('locale.switch');
 Route::get('/screenshot-login/{email}', [ScreenshotGeneratorLoginController::class, 'login'])->middleware('web')->name('screenshot.login');
-Route::get('/demo-preview', fn () => view('demo.preview'))->name('demo.preview');
+Route::get('/demo-preview', fn() => view('demo.preview'))->name('demo.preview');

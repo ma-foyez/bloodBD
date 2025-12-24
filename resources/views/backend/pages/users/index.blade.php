@@ -11,7 +11,7 @@
 
     {!! Hook::applyFilters(UserFilterHook::USER_AFTER_BREADCRUMBS, '') !!}
 
-    @livewire('datatable.user-datatable', ['lazy' => true])
+    @livewire('backend.user.user-manager')
 
     {!! Hook::applyFilters(UserFilterHook::USER_AFTER_TABLE, '') !!}
 </x-layouts.backend-layout>

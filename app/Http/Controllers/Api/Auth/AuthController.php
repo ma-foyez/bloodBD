@@ -6,13 +6,59 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Services\UserService;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules;
 
 class AuthController extends ApiController
 {
+    public function __construct(
+        private readonly UserService $userService
+    ) {
+    }
+
+    /**
+     * Register a new user.
+     *
+     * @tags Authentication
+     */
+    public function register(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // Prepare data for UserService
+        $data = $request->only(['first_name', 'last_name', 'email', 'password']);
+        $data['username'] = explode('@', $data['email'])[0] . rand(1000, 9999); // Auto-generate username or take from request if needed
+
+        $user = $this->userService->createUser($data);
+
+        // Assign default role 'user' if not handled in service
+        if (!$user->hasAnyRole(\App\Models\Role::all())) {
+            $user->assignRole(\App\Models\Role::SUBSCRIBER);
+        }
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'User registered successfully.',
+            'token' => $token,
+            'user' => $user,
+            'token_type' => 'Bearer',
+        ], 201);
+    }
     /**
      * Login user and create token.
      *
@@ -22,7 +68,7 @@ class AuthController extends ApiController
     {
         $user = User::where('email', $request->email)->first();
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'message' => 'Invalid credentials',
             ], 401);
