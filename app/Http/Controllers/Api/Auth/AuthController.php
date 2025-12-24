@@ -111,16 +111,33 @@ class AuthController extends ApiController
         // Create a token for the user
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        // Load relationships
+        $user->load(['division', 'district', 'area']);
+
         return $this->successResponse([
             'token' => $token,
             'user' => [
                 'id' => $user->id,
-                'name' => $user->name,
+                'name' => trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')),
                 'email' => $user->email,
                 'username' => $user->username,
                 'mobile' => $user->mobile,
-                'created_at' => $user->created_at,
-                'updated_at' => $user->updated_at,
+                'dob' => $user->dob,
+                'blood_group' => $user->blood_group,
+                'occupation' => $user->occupation,
+                'is_weight_50kg' => $user->is_weight_50kg,
+                'last_donation' => $user->last_donation,
+                'location' => [
+                    'division' => $user->division ? $user->division->name : null,
+                    'district' => $user->district ? $user->district->name : null,
+                    'area' => $user->area ? $user->area->name : null,
+                    'post_office' => $user->post_office,
+                ],
+                'is_active' => $user->is_active,
+                // 'is_approved' => $user->is_approved,
+                'pic' => $user->pic,
+                'registered_at' => $user->created_at,
+                // 'updated_at' => $user->updated_at,
             ],
             'token_type' => 'Bearer',
         ], 'Login successful.');
@@ -134,12 +151,42 @@ class AuthController extends ApiController
     public function user(Request $request): JsonResponse
     {
         $user = $request->user();
+
+        // Load relationships
+        $user->load(['division', 'district', 'area']);
+
         return $this->successResponse([
             'id' => $user->id,
-            'first_name' => $user->first_name,
-            'last_name' => $user->last_name,
-            'full_name' => $user->full_name,
+            'name' => trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')),
             'email' => $user->email,
+            'username' => $user->username,
+            'mobile' => $user->mobile,
+            'dob' => $user->dob,
+            'blood_group' => $user->blood_group,
+            'occupation' => $user->occupation,
+            'is_weight_50kg' => $user->is_weight_50kg,
+            'last_donation' => $user->last_donation,
+            'location' => [
+                'division' => $user->division ? [
+                    'id' => $user->division->id,
+                    'name' => $user->division->name,
+                    'bn_name' => $user->division->bn_name,
+                ] : null,
+                'district' => $user->district ? [
+                    'id' => $user->district->id,
+                    'name' => $user->district->name,
+                    'bn_name' => $user->district->bn_name,
+                ] : null,
+                'area' => $user->area ? [
+                    'id' => $user->area->id,
+                    'name' => $user->area->name,
+                    'bn_name' => $user->area->bn_name,
+                ] : null,
+                'post_office' => $user->post_office,
+            ],
+            'is_active' => $user->is_active,
+            'is_approved' => $user->is_approved,
+            'pic' => $user->pic,
             'created_at' => $user->created_at,
             'updated_at' => $user->updated_at,
         ], 'User details retrieved successfully.');
