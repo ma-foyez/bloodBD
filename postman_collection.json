@@ -25,7 +25,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\"\n}"
+                            "raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"username\": \"johndoe123\",\n    \"mobile\": \"01712345678\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"dob\": \"1990-01-01\",\n    \"blood_group\": \"A+\",\n    \"occupation\": \"Software Engineer\",\n    \"is_weight_50kg\": true,\n    \"last_donation\": \"2024-01-15\",\n    \"division_id\": 1,\n    \"district_id\": 1,\n    \"area_id\": 1,\n    \"post_office\": \"Dhaka-1000\"\n}"
                         },
                         "url": {
                             "raw": "{{baseUrl}}/api/auth/register",
@@ -38,7 +38,7 @@
                                 "register"
                             ]
                         },
-                        "description": "Register a new user account."
+                        "description": "Register a new user account with complete profile information."
                     },
                     "response": []
                 },
@@ -72,7 +72,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"email\": \"john.doe@example.com\",\n    \"password\": \"password123\"\n}"
+                            "raw": "{\n    \"email_or_mobile\": \"john.doe@example.com\",\n    \"password\": \"password123\"\n}"
                         },
                         "url": {
                             "raw": "{{baseUrl}}/api/auth/login",
@@ -85,7 +85,7 @@
                                 "login"
                             ]
                         },
-                        "description": "Login and retrieve authentication token. The token is automatically saved to collection variables."
+                        "description": "Login with email OR mobile and password. The token is automatically saved to collection variables."
                     },
                     "response": []
                 },
